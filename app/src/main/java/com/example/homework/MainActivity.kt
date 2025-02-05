@@ -3,10 +3,14 @@ package com.example.homework
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-
+import androidx.room.Room
 
 object SampleData {
     // Sample conversation data
@@ -80,19 +84,35 @@ object SampleData {
 }
 
 class MainActivity : ComponentActivity() {
+    private val db by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            UsernameDB::class.java,
+            "UsernameDB"
+        ).build()
+    }
+    private val viewModel by viewModels<ViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
+                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                    return ViewModel(db.dao) as T
+                }
+            }
+        }
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
-            NavHost(navController = navController, startDestination =  "Screen1") {
-                composable("Screen1"){
-                    HomeScreen(SampleData, navController)
+            val state by viewModel.state.collectAsState()
+            NavHost(navController = navController, startDestination = "Screen1") {
+                composable("Screen1") {
+                    HomeScreen(SampleData, navController, state = state)
                 }
                 composable("Screen2") {
-                    Screen2(navController)
+                    Screen2(navController, state = state, onEvent = viewModel::onEvent)
                 }
             }
         }
     }
 }
-

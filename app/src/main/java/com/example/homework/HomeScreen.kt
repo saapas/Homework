@@ -1,9 +1,7 @@
 package com.example.homework
 
-import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,7 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
@@ -30,31 +28,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.homework.ui.theme.HomeWorkTheme
 
 data class Message(val author: String, val body: String)
 
 @Composable
-fun MessageCard(msg: Message) {
-    Row (modifier = Modifier.padding(all = 8.dp)){
-        Image(
-            painter = painterResource(R.drawable.n_ytt_kuva_2024_11_06_134830),
-            contentDescription = "PFP",
-            modifier = Modifier
-                // Set image size to 40 dp
-                .size(40.dp)
-                // Clip image to be shaped as a circle
-                .clip(CircleShape)
-                .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
-        )
-        // Add a horizontal space between the image and the column
-        Spacer(modifier = Modifier.width(8.dp))
-        // We keep track if the message is expanded or not in this
-        // variable
+fun MessageCard(msg: Message, username: String, image: String) {
+    Row(modifier = Modifier.padding(all = 8.dp)) {
+        image.let {
+            AsyncImage(
+                model = it, // URI of the selected image
+                placeholder = painterResource(R.drawable.n_ytt_kuva_2024_11_06_134830),
+                contentDescription = "Profile Picture",
+                modifier = Modifier
+                    .size(50.dp) // Fixed size for the profile picture
+                    .clip(RoundedCornerShape(12.dp)) // Rounded corners
+                    .border(1.dp, Color.Gray, RoundedCornerShape(12.dp)), // Optional border
+                contentScale = ContentScale.Crop // Crop the image to fit the size
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
         var isExpanded by remember { mutableStateOf(false) }
         // surfaceColor will be updated gradually from one color to the other
         val surfaceColor by animateColorAsState(
@@ -62,7 +61,8 @@ fun MessageCard(msg: Message) {
         )
         // We toggle the isExpanded variable when we click on this Column
         Column(modifier = Modifier.clickable { isExpanded = !isExpanded }) {
-            Text(text = msg.author,
+            Text(
+                text = username,
                 color = MaterialTheme.colorScheme.secondary
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -91,63 +91,50 @@ fun MessageCard(msg: Message) {
 }
 
 @Composable
-fun Conversation(messages: List<Message>) {
+fun Conversation(messages: List<Message>, username: String, image: String) {
     LazyColumn {
         items(messages) { message ->
-            MessageCard(message)
+            MessageCard(message, username, image)
         }
     }
 }
 
 @Composable
-fun HomeScreen (messageData: SampleData, navController: NavController) {
+fun HomeScreen(
+    messageData: SampleData,
+    navController: NavController,
+    state: ChangeState
+) {
     HomeWorkTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            Conversation(messageData.conversationSample)
+            Conversation(messageData.conversationSample, state.userName, state.profilePic)
             SettingButton(navController)
         }
     }
 }
-@Preview
-@Composable
-fun PreviewConversation() {
-    HomeWorkTheme {
-        Conversation(SampleData.conversationSample)
-    }
-}
-@Preview(name = "Light Mode")
-@Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true,
-    name = "Dark Mode"
-)
-@Composable
-fun PreviewMessageCard() {
-    HomeWorkTheme {
-        Surface {
-            MessageCard(
-                msg = Message("Lexi", "Hey, take a look at Jetpack Compose, it's great!")
-            )
-        }
-    }
-}
 
 @Composable
-fun SettingButton (navController: NavController) {
-    Column (Modifier.fillMaxSize(),
+fun SettingButton(navController: NavController) {
+    Column(
+        Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.End
-        ){
+    ) {
         Spacer(modifier = Modifier.height(15.dp))
-        Button(onClick = {
-        navController.navigate("Screen2")
-        },
-            colors = ButtonColors(MaterialTheme.colorScheme.surfaceContainer,
+        Button(
+            onClick = {
+                navController.navigate("Screen2")
+            },
+            colors = ButtonColors(
+                MaterialTheme.colorScheme.surfaceContainer,
                 MaterialTheme.colorScheme.onBackground,
                 MaterialTheme.colorScheme.secondary,
-                MaterialTheme.colorScheme.surface)
+                MaterialTheme.colorScheme.surface
+            )
         ) {
-            Text(text = "Go To Screen2",
-                color = MaterialTheme.colorScheme.primary)
+            Text(
+                text = "Go To Screen2",
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
