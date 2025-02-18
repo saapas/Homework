@@ -112,6 +112,9 @@ class MainActivity : ComponentActivity() {
                 composable("Screen2") {
                     Screen2(navController, state = state, onEvent = viewModel::onEvent)
                 }
+                composable("Screen3") {
+                    MagneticFieldScreen(navController)
+                }
             }
         }
     }

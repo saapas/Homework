@@ -15,6 +15,7 @@ navigationCompose = "2.8.5"
 roomRuntime = "2.6.1"
 volley = "1.2.1"
 appcompat = "1.2.0"
+runtime = "1.0.0-alpha01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +50,7 @@ ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-runtime = { group = "androidx.xr.runtime", name = "runtime", version.ref = "runtime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

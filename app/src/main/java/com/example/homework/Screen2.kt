@@ -67,7 +67,6 @@ fun Screen2(
             }
         }
     )
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -120,5 +119,14 @@ fun Screen2(
                 .padding(16.dp),
             singleLine = true
         )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = {
+            navController.navigate("Screen3") {
+                popUpTo("Screen3") { inclusive = true }
+            }
+        }) {
+            Text(text = "Go To Compass")
+        }
     }
 }

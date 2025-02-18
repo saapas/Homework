@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.espresso.core)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.runtime)
     androidTestImplementation(libs.androidx.navigation.testing)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
